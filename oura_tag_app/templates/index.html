@@ -27,7 +27,7 @@
 
 {% if averages %}
 
-    {% for metric in available_scores.keys %}
+    {% for metric, scores in available_scores.items %}
         <hr>
         <div class="container-xl">
         <h2 class="text-center">{{metric}}</h2>
@@ -36,7 +36,7 @@
                     <tr>
                         <th>Tag</th>
                         <th>Days marked</th>
-                        {% for score_title in available_scores|get_item:metric %}
+                        {% for score_title in scores %}
                             <th>{{score_title}} (Diff. in averages)</th>
                         {% endfor %}
 
@@ -47,7 +47,7 @@
                     <tr>
                         <td>{{tag}}</td>
                         <td><a href="#" data-toggle="tooltip" data-placement="top" title="{{days}}">{{days|length}}</a></td>
-                        {% for score_title in available_scores|get_item:metric %}
+                        {% for score_title in scores %}
                             {% with avg_scores=averages|get_item:tag|get_item:"averages"|get_item:metric|get_item:score_title %}
                                 <td nowrap="nowrap">
                                     Night before:
@@ -85,7 +85,7 @@
                     <tr>
                         <th>Tag</th>
                         <th>Days Marked</th>
-                        {% for score_title in available_scores|get_item:metric %}
+                        {% for score_title in scores %}
                             <th>{{score_title}}</th>
                         {% endfor %}
 
