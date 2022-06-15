@@ -1,6 +1,6 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Submit, Layout, Row, Column
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
@@ -22,7 +22,17 @@ class TagSettingsForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_id = 'form'
         self.helper.form_method = 'post'
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.layout = Layout(
+            'access_token',
+            Row(
+                Column('start_date', css_class='form-group col-md-6 mb-0'),
+                Column('end_date', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'
+            ),
+            Row(Column('formula', css_class='form-group col-md-2 mb-0'), css_class='form_row'),
+            Submit('submit', 'Submit')
+        )
+
 
     def clean(self):
         start_date = self.cleaned_data.get('start_date')
