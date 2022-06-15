@@ -8,14 +8,14 @@ from django.utils import timezone
 class TagSettingsForm(forms.Form):
     formula = forms.ChoiceField(choices=[("mean", "Mean"), ("median", "Median")], initial="mean",)
     access_token = forms.CharField()
-    start_date = forms.DateField(input_formats=['%d-%m-%Y'],
-                                 widget=forms.DateInput(
-        attrs={'class': 'datepicker', 'value': (timezone.now() - timezone.timedelta(days=365*2)).strftime("%d-%m-%Y")})
-                                 )
-
-    end_date = forms.DateField(input_formats=['%d-%m-%Y'],
-                               widget=forms.DateInput(
-        attrs={'class': 'datepicker', 'value': (timezone.now() - timezone.timedelta(days=1)).strftime("%d-%m-%Y")}))
+    start_date = forms.DateField(widget=forms.widgets.DateInput(
+        attrs={'type': 'date',
+               'value': (timezone.now() - timezone.timedelta(days=365*2)).strftime("%Y-%m-%d")}
+    ))
+    end_date = forms.DateField(widget=forms.widgets.DateInput(
+        attrs={'type': 'date',
+               'value': (timezone.now() - timezone.timedelta(days=1)).strftime("%Y-%m-%d")}
+    ))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

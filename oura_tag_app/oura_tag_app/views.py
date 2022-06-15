@@ -12,18 +12,18 @@ from .forms import TagSettingsForm
 
 dateformat = '%Y-%m-%d'
 
-wanted_scores = [
-        ["SLEEP", [
-            "duration_in_hrs",
-            "score",
-            "temperature_deviation",
-            "hr_lowest",
-            "hr_average"]],
-        ["READY", [
-            "score",
-            "score_hrv_balance"]],
-        ["ACTIVITY", []]
-    ]
+wanted_scores = {
+    "SLEEP": [
+        "duration_in_hrs",
+        "score",
+        "temperature_deviation",
+        "hr_lowest",
+        "hr_average"],
+    "READY": [
+        "score",
+        "score_hrv_balance"],
+    "ACTIVITY": []
+}
 
 
 def index(request):
@@ -61,7 +61,7 @@ def index(request):
 
                 data = {"tags_days": tags_and_days,
                         "tags_data": tags_data,
-                        "available_scores": dict(wanted_scores),
+                        "available_scores": wanted_scores,
                         "averages": averages,
                         "form": form}
             else:
@@ -140,20 +140,20 @@ def _get_averages(tags_and_days, df, formula="mean"):
 
     for tag in tags_and_days.keys():
         averages[tag] = {"averages": {}}
-        for s in wanted_scores:
-            averages[tag]["averages"][s[0]] = {}
-            for t in s[1]:
+        for parent, scores in wanted_scores.items():
+            averages[tag]["averages"][parent] = {}
+            for t in scores:
                 if formula == "mean":
-                    average_all = df[f"{s[0]}:{t}"].mean()
+                    average_all = df[f"{parent}:{t}"].mean()
                 else:
-                    average_all = df[f"{s[0]}:{t}"].median()
-                averages[tag]["averages"][s[0]][t] = {"average_all": average_all}
+                    average_all = df[f"{parent}:{t}"].median()
+                averages[tag]["averages"][parent][t] = {"average_all": average_all}
 
                 for d in wanted_days:
                     day_scores = []
                     for day in tags_and_days[tag]:
                         try:
-                            day_score = df[f"{s[0]}:{t}"].loc[
+                            day_score = df[f"{parent}:{t}"].loc[
                                 date.fromisoformat(day) + timezone.timedelta(days=d)]
                             day_scores.append(day_score)
                         except KeyError:
@@ -168,9 +168,8 @@ def _get_averages(tags_and_days, df, formula="mean"):
                         day_average = None
 
                     all_diff = day_average - average_all if day_average else None
-                    averages[tag]["averages"][s[0]][t][f"{d}"] = {
+                    averages[tag]["averages"][parent][t][f"{d}"] = {
                         "average": day_average,
                         "all_diff": all_diff
-
-            }
+                    }
     return averages
