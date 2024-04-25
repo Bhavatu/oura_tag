@@ -22,7 +22,7 @@ wanted_scores = {
     "READY": [
         "score",
         "score_hrv_balance"],
-    "ACTIVITY": []
+    # "ACTIVITY": []
 }
 
 
